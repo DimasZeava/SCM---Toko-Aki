@@ -39,38 +39,27 @@ export default function Authenticated({
                         </NavLink>
                         {/* Add more NavLinks here as needed */}
                     </nav>
-                    <div className="border-t border-gray-100 px-6 py-4">
+                   <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
                             <div className="text-base font-medium text-gray-800">{user.name}</div>
                             <div className="text-sm font-medium text-gray-500">{user.email}</div>
                         </div>
-                        <Dropdown>
-                            <Dropdown.Trigger>
-                                <span className="inline-flex rounded-md">
-                                    <button
-                                        type="button"
-                                        className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                    >
-                                        Account
-                                        <svg className="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </span>
-                            </Dropdown.Trigger>
-                            <Dropdown.Content>
-                                <Dropdown.Link href={route('profile.edit')}>
-                                    Profile
-                                </Dropdown.Link>
-                                <Dropdown.Link
-                                    href={route('logout')}
-                                    method="post"
-                                    as="button"
+                        <div className="flex flex-col space-y-1 mt-2">
+                            <Link
+                                href={route('profile.edit')}
+                                className="text-sm text-gray-700 hover:text-blue-600 transition"
+                            >
+                                Profile
+                            </Link>
+                            <form method="POST" action={route('logout')}>
+                                <button
+                                    type="submit"
+                                    className="text-sm text-gray-700 hover:text-red-600 transition w-full text-left"
                                 >
                                     Log Out
-                                </Dropdown.Link>
-                            </Dropdown.Content>
-                        </Dropdown>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,7 +73,7 @@ export default function Authenticated({
             )}
 
             {/* Main content */}
-            <div className="flex-1 flex flex-col min-h-screen ml-0 sm:ml-64 transition-all duration-200">
+            <div className="flex-1 flex flex-col min-h-screen ml-0 transition-all duration-200">
                 {/* Mobile sidebar toggle */}
                 <div className="sm:hidden flex items-center justify-between px-4 py-2 bg-white border-b border-gray-100">
                     <button
