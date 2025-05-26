@@ -2,7 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
 export default function Authenticated({
@@ -51,14 +51,13 @@ export default function Authenticated({
                             >
                                 Profile
                             </Link>
-                            <form method="POST" action={route('logout')}>
-                                <button
-                                    type="submit"
-                                    className="text-sm text-gray-700 hover:text-red-600 transition w-full text-left"
-                                >
-                                    Log Out
-                                </button>
-                            </form>
+                            <button
+                                onClick={() => router.post(route('logout'))}
+                                type="submit"
+                                className="text-sm text-gray-700 hover:text-red-600 transition w-full text-left"
+                            >
+                                Log Out
+                            </button>
                         </div>
                     </div>
                 </div>
