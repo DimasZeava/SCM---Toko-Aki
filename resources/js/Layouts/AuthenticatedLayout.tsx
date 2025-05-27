@@ -5,7 +5,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, router, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
-export default function Authenticated({
+export default function AuthenticatedLayout({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
@@ -31,13 +31,27 @@ export default function Authenticated({
                         </button>
                     </div>
                     <nav className="flex-1 px-4 py-6 space-y-2">
-                        <NavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Dashboard
-                        </NavLink>
-                        {/* Add more NavLinks here as needed */}
+                        <div className="flex flex-col space-y-1 gap-3">
+                            <NavLink
+                                href={route('dashboard')}
+                                active={route().current('dashboard')}
+                            >
+                                Dashboard
+                            </NavLink>
+                            <NavLink
+                                href={route('products.index')}
+                                active={route().current('products.index') || route().current('products.create') || route().current('products.edit')}
+                            >
+                                Products
+                            </NavLink>
+                            <NavLink
+                                href='/'
+                                // href={route('products.index')}
+                                // active={route().current('products.index') || route().current('products.create') || route().current('products.edit')}
+                            >
+                                Orders
+                            </NavLink>
+                        </div>
                     </nav>
                    <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
