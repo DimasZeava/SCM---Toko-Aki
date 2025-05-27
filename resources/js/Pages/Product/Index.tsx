@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 
 const Index = () => {
   const { products } = usePage().props;
@@ -23,6 +23,16 @@ const Index = () => {
                 <p>Created At: {new Date(product.created_at).toLocaleDateString()}</p>
                 <p>Updated At: {new Date(product.updated_at).toLocaleDateString()}</p>
             </div>
+            <Link href={route('products.edit', product.id)} className="text-blue-500 hover:underline">
+                Edit
+            </Link>
+            <button
+                onClick={() => router.delete(route('products.destroy', product.id))}
+                className="text-blue-500 hover:underline ml-2 bg-transparent border-none p-0 cursor-pointer"
+                type="button"
+            >
+                Delete
+            </button>
             </div>
             ))}
         </ul>
