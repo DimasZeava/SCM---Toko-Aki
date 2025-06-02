@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use App\PermissionEnum;
 use App\RolesEnum;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

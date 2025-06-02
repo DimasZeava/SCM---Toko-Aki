@@ -2,6 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import Sidebar from '@/Components/Sidebar';
 import { Link, router, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
@@ -30,29 +31,7 @@ export default function AuthenticatedLayout({
                             </svg>
                         </button>
                     </div>
-                    <nav className="flex-1 px-4 py-6 space-y-2">
-                        <div className="flex flex-col space-y-1 gap-3">
-                            <NavLink
-                                href={route('dashboard')}
-                                active={route().current('dashboard')}
-                            >
-                                Dashboard
-                            </NavLink>
-                            <NavLink
-                                href={route('products.index')}
-                                active={route().current('products.index') || route().current('products.create') || route().current('products.edit')}
-                            >
-                                Products
-                            </NavLink>
-                            <NavLink
-                                href='/'
-                                // href={route('products.index')}
-                                // active={route().current('products.index') || route().current('products.create') || route().current('products.edit')}
-                            >
-                                Orders
-                            </NavLink>
-                        </div>
-                    </nav>
+                   <Sidebar />
                    <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
                             <div className="text-base font-medium text-gray-800">{user.name}</div>
