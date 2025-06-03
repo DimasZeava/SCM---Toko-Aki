@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\POController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,7 +40,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/po/notifications', [POController::class, 'notifications'])->name('po.notifications');
     //Admin routes
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
 });
 
 require __DIR__.'/auth.php';
