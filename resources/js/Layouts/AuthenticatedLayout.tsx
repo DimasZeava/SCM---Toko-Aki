@@ -1,7 +1,9 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
-import NavLink from "@/Components/NavLink";
-import { Link, router, usePage } from "@inertiajs/react";
-import { PropsWithChildren, ReactNode, useState } from "react";
+import ApplicationLogo from '@/Components/ApplicationLogo';
+import Dropdown from '@/Components/Dropdown';
+import NavLink from '@/Components/NavLink';
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import { Link, router, usePage } from '@inertiajs/react';
+import { PropsWithChildren, ReactNode, useState } from 'react';
 
 export default function AuthenticatedLayout({
     header,
@@ -121,10 +123,12 @@ export default function AuthenticatedLayout({
                             </svg>
                         </button>
                     </div>
+
                     <nav className="flex-1 px-4 py-6 space-y-3">
                         {renderSidebarLinks()}
                     </nav>
-                    <div className="border-t px-6 py-4">
+                   
+                   <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
                             <div className="text-base font-medium">
                                 {user.name}
