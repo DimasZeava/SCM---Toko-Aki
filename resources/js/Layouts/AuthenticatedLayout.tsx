@@ -2,7 +2,6 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import Sidebar from '@/Components/Sidebar';
 import { Link, router, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
@@ -10,44 +9,144 @@ export default function AuthenticatedLayout({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
- const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { user } = usePage().props.auth;
+    console.log("Authenticated user:", user);
+    // Fungsi bantu untuk cek apakah user punya role tertentu
+    const hasRole = (role: string) => user.roles.includes(role);
+    console.log("User roles:", user.roles);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const renderSidebarLinks = () => {
+        if (hasRole("Retail")) {
+            return (
+                <div className="flex flex-col space-y-2">
+                    <NavLink
+                        href={route("dashboard")}
+                        active={route().current("dashboard")}
+                    >
+                        Dashboard
+                    </NavLink>
+                    <NavLink
+                        href={route("purchase-orders.index")}
+                        active={route().current("purchase-orders.index")}
+                    >
+                        Purchase Order
+                    </NavLink>
+                    <NavLink
+                        href={route("payments.index")}
+                        active={route().current("payments.index")}
+                    >
+                        Pembayaran
+                    </NavLink>
+                    <NavLink
+                        href={route("inventory.index")}
+                        active={route().current("inventory.index")}
+                    >
+                        Inventori
+                    </NavLink>
+                </div>
+            );
+        } else if (hasRole("Supplier")) {
+            return (
+                <div className="flex flex-col space-y-2">
+                    <NavLink
+                        href={route("supplier.dashboard")}
+                        active={route().current("supplier.dashboard")}
+                    >
+                        Dashboard
+                    </NavLink>
+                    <NavLink
+                        href={route("products.index")}
+                        active={route().current("products.index")}
+                    >
+                        Produk
+                    </NavLink>
+                    <NavLink
+                        href={route("orders.index")}
+                        active={route().current("orders.index")}
+                    >
+                        Order
+                    </NavLink>
+                </div>
+            );
+        } else if (hasRole("Admin")) {
+            return (
+                <div className="flex flex-col space-y-2">
+                    <NavLink
+                        href={route("admin.dashboard")}
+                        active={route().current("admin.dashboard")}
+                    >
+                        Dashboard
+                    </NavLink>
+                    <NavLink
+                        href={route("users.index")}
+                        active={route().current("users.index")}
+                    >
+                        Manajemen User
+                    </NavLink>
+                </div>
+            );
+        } else {
+            return <p className="text-red-500">Role tidak dikenali</p>;
+        }
+    };
 
     return (
         <div className="min-h-screen flex bg-gray-100">
             {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-200 ease-in-out sm:translate-x-0 sm:static sm:inset-0`}>
+            <div
+                className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r transform ${
+                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                } transition sm:translate-x-0 sm:static`}
+            >
                 <div className="flex flex-col h-full">
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div className="flex items-center justify-between px-6 py-4 border-b">
                         <Link href="/">
                             <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                         </Link>
                         <button
-                            className="sm:hidden text-gray-500 focus:outline-none"
+                            className="sm:hidden"
                             onClick={() => setSidebarOpen(false)}
                         >
-                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            <svg
+                                className="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
                         </button>
                     </div>
-                   <Sidebar />
+
+                    <nav className="flex-1 px-4 py-6 space-y-3">
+                        {renderSidebarLinks()}
+                    </nav>
+                   
                    <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
-                            <div className="text-base font-medium text-gray-800">{user.name}</div>
-                            <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                            <div className="text-base font-medium">
+                                {user.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                                {user.email}
+                            </div>
                         </div>
                         <div className="flex flex-col space-y-1 mt-2">
                             <Link
-                                href={route('profile.edit')}
-                                className="text-sm text-gray-700 hover:text-blue-600 transition"
+                                href={route("profile.edit")}
+                                className="text-sm text-blue-600"
                             >
                                 Profile
                             </Link>
                             <button
-                                onClick={() => router.post(route('logout'))}
-                                type="submit"
-                                className="text-sm text-gray-700 hover:text-red-600 transition w-full text-left"
+                                onClick={() => router.post(route("logout"))}
+                                className="text-sm text-red-600 text-left"
                             >
                                 Log Out
                             </button>
@@ -64,27 +163,36 @@ export default function AuthenticatedLayout({
                 />
             )}
 
-            {/* Main content */}
-            <div className="flex-1 flex flex-col min-h-screen ml-0 transition-all duration-200">
-                {/* Mobile sidebar toggle */}
-                <div className="sm:hidden flex items-center justify-between px-4 py-2 bg-white border-b border-gray-100">
-                    <button
-                        className="text-gray-500 focus:outline-none"
-                        onClick={() => setSidebarOpen(true)}
-                    >
-                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col min-h-screen ml-0">
+                {/* Mobile Toggle */}
+                <div className="sm:hidden flex items-center justify-between px-4 py-2 bg-white border-b">
+                    <button onClick={() => setSidebarOpen(true)}>
+                        <svg
+                            className="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
                         </svg>
                     </button>
-                    <span className="font-semibold text-lg text-gray-800">Menu</span>
+                    <span className="text-lg font-semibold">Menu</span>
                 </div>
+
                 {header && (
                     <header className="bg-white shadow">
-                        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        <div className="max-w-7xl mx-auto px-4 py-6">
                             {header}
                         </div>
                     </header>
                 )}
+
                 <main className="flex-1 p-4">{children}</main>
             </div>
         </div>
