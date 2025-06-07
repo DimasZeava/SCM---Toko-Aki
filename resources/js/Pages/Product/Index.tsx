@@ -7,23 +7,25 @@ import DataTable from "@/Components/DataTable";
 import { Product } from "@/types/index.d";
 
 const Index = () => {
-    const { products } = usePage().props as {
-        products: {
-            data: Product[];
-            current_page: number;
-            last_page: number;
-            per_page: number;
-            total: number;
-            links: { url: string | null; label: string; active: boolean }[];
-        };
-    };
+    // Ambil dari inertia props, fallback jika bukan paginasi
+    const { products: rawProducts } = usePage().props as any;
+    const products = rawProducts?.data
+        ? rawProducts
+        : {
+              data: rawProducts || [],
+              current_page: 1,
+              last_page: 1,
+              per_page: (rawProducts || []).length,
+              total: (rawProducts || []).length,
+              links: [],
+          };
 
     const [search, setSearch] = useState("");
 
     // Filter hanya di frontend, paginasi tetap backend
     const filteredProducts = useMemo(() => {
         if (!search) return products.data;
-        return products.data.filter((product) =>
+        return products.data.filter((product: Product) =>
             product.name.toLowerCase().includes(search.toLowerCase())
         );
     }, [search, products.data]);
