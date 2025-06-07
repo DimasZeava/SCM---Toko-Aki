@@ -4,36 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class PurchaseOrder extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
-        'po_id',
+        'retail_id',
+        'supplier_id',
         'product_id',
         'quantity',
-        'total_price',
         'status',
-        'shipping_address',
     ];
 
     protected function casts(): array
     {
         return [
             'quantity' => 'integer',
-            'total_price' => 'decimal:2',
             'status' => 'string',
-            'shipping_address' => 'string',
         ];
     }
 
-    public function purchaseOrder()
-    {
-        return $this->belongsTo(PurchaseOrder::class, 'po_id');
-    }
-
     public function product()
-{
-    return $this->belongsTo(\App\Models\Product::class, 'product_id');
-}
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

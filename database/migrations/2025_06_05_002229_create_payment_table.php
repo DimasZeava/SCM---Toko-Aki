@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payment', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('po_id')->constrained('purchase_order')->onDelete('cascade');
+            $table->foreignId('po_id')->constrained('purchase_orders')->onDelete('cascade');
             $table->integer('amount')->default(0);
             $table->string('payment_method')->default('credit_card');
             $table->string('status')->default('pending');

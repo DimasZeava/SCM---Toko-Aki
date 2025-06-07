@@ -9,6 +9,15 @@ export interface User {
     email_verified_at?: string;
 }
 
+export interface Order {
+    id: number;
+    product_id: number;
+    quantity: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Product {
     id: number;
     name: string;
@@ -29,4 +38,5 @@ export type PageProps<
     ziggy: Config & { location: string };
     csrf_token: string;
     products: Product[];
+    orders?: any[];
 };
