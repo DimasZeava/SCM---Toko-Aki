@@ -2,30 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PurchaseOrder extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'retail_id',
         'supplier_id',
-        'product_id',
-        'quantity',
         'status',
+        'total_amount',
     ];
 
-    protected function casts(): array
+    public function orders()
     {
-        return [
-            'quantity' => 'integer',
-            'status' => 'string',
-        ];
+        return $this->hasMany(Order::class, 'po_id');
     }
 
-    public function product()
+    public function supplier()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(User::class, 'supplier_id');
+    }
+    public function retail()
+    {
+        return $this->belongsTo(User::class, 'retail_id');
     }
 }

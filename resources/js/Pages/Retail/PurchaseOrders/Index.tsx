@@ -1,74 +1,131 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { usePage, router } from '@inertiajs/react';
-import { useState } from 'react';
+import React, { useState, useMemo } from "react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Link, usePage } from "@inertiajs/react";
+import DataTable from "@/Components/DataTable";
+import Pagination from "@/Components/Pagination";
+import SearchBar from "@/Components/SearchBar";
 
-export default function PurchaseOrderIndex() {
-    const { products, purchaseOrders } = usePage().props as {
-        products: { id: number; name: string; stock: number }[];
-        purchaseOrders: any[];
+interface Supplier {
+    id: number;
+    name: string;
+}
+interface PurchaseOrder {
+    id: number;
+    supplier?: Supplier;
+    status: string;
+    total_amount: number;
+    created_at: string;
+}
+
+export default function PurchaseOrderIndex({
+    purchaseOrder,
+}: {
+    purchaseOrder: PurchaseOrder[];
+}) {
+    const { purchaseOrders } = usePage().props as any as {
+        purchaseOrders: {
+            data: PurchaseOrder[];
+            current_page?: number;
+            last_page?: number;
+            per_page?: number;
+            total?: number;
+            links?: { url: string | null; label: string; active: boolean }[];
+        };
     };
+    console.log(purchaseOrders);
 
-    const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
-    const [quantity, setQuantity] = useState<number>(1);
+    const [search, setSearch] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!selectedProduct) return;
-        router.post(route('retail.purchase-orders.store'), {
-            product_id: selectedProduct,
-            quantity,
-        });
-    };
+    // Filter frontend (optional)
+    const filteredOrders = useMemo(() => {
+        if (!search) return purchaseOrders.data;
+        return purchaseOrders.data.filter(
+            (po) =>
+                po.supplier?.toString().includes(search) ||
+                po.status.toLowerCase().includes(search.toLowerCase()) ||
+                po.total_amount.toString().includes(search) ||
+                po.created_at.includes(search)
+        );
+    }, [search, purchaseOrders.data]);
+
+    const columns = [
+        {
+            label: "Supplier Name",
+            render: (po: PurchaseOrder) => po.supplier?.name ?? "-",
+        },
+        { label: "Status", render: (po: PurchaseOrder) => po.status },
+        {
+            label: "Total",
+            render: (po: PurchaseOrder) => `Rp ${po.total_amount}`,
+        },
+        {
+            label: "Tanggal",
+            render: (po: PurchaseOrder) => po.created_at.slice(0, 10),
+        },
+    ];
+
+    const actions = (po: PurchaseOrder) => (
+        <div className="flex space-x-2">
+            <Link
+                href={route("purchase-orders.show", po.id)}
+                className="text-blue-600 hover:underline"
+            >
+                Lihat
+            </Link>
+            <Link
+                href={route("purchase-orders.edit", po.id)}
+                className="text-yellow-600 hover:underline"
+            >
+                Edit
+            </Link>
+            <Link
+                href={route("purchase-orders.destroy", po.id)}
+                method="delete"
+                className="text-red-600 hover:underline"
+                as="button"
+            >
+                Hapus
+            </Link>
+        </div>
+    );
 
     return (
         <AuthenticatedLayout>
-            <div className="p-6">
-                <h1 className="text-2xl font-bold mb-4">Daftar Purchase Order</h1>
-                <form onSubmit={handleSubmit} className="mb-4 flex gap-2 items-end">
-                    <div>
-                        <label className="block text-sm">Pilih Produk</label>
-                        <select
-                            className="border rounded px-2 py-1"
-                            value={selectedProduct ?? ''}
-                            onChange={e => setSelectedProduct(Number(e.target.value))}
-                            required
-                        >
-                            <option value="" disabled>Pilih produk</option>
-                            {products.map(product => (
-                                <option key={product.id} value={product.id}>
-                                    {product.name} (Stok: {product.stock})
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm">Jumlah</label>
-                        <input
-                            type="number"
-                            min={1}
-                            className="border rounded px-2 py-1"
-                            value={quantity}
-                            onChange={e => setQuantity(Number(e.target.value))}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+            <div className="space-y-4 max-w-7xl mx-auto p-6">
+                <h1 className="text-2xl font-bold mb-4">
+                    Daftar Purchase Order
+                </h1>
+                <div className="flex justify-between items-center">
+                    <SearchBar searchTerm={search} onSearch={setSearch} />
+                    <Link
+                        href={route("purchase-orders.create")}
+                        className="bg-blue-600 text-white px-4 py-2 rounded"
+                    >
                         + Buat Purchase Order
-                    </button>
-                </form>
-                <div className="bg-white rounded shadow p-4">
-                    <h2 className="font-semibold mb-2">Purchase Orders</h2>
-                    {purchaseOrders.length === 0 ? (
-                        <p className="text-gray-500">Belum ada PO yang dibuat.</p>
-                    ) : (
-                        <ul>
-                            {purchaseOrders.map(po => (
-                                <li key={po.id}>
-                                    {po.product?.name ?? 'Produk'} - Qty: {po.quantity} - Status: {po.status}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                    </Link>
+                </div>
+                <DataTable
+                    columns={columns}
+                    data={filteredOrders}
+                    actions={actions}
+                />
+                <div className="flex justify-between items-center text-sm text-gray-600 mt-2">
+                    <div>
+                        Showing{" "}
+                        {((purchaseOrders.current_page ?? 1) - 1) *
+                            (purchaseOrders.per_page ?? filteredOrders.length) +
+                            1}{" "}
+                        to{" "}
+                        {Math.min(
+                            (purchaseOrders.current_page ?? 1) *
+                                (purchaseOrders.per_page ??
+                                    filteredOrders.length),
+                            purchaseOrders.total ?? filteredOrders.length
+                        )}{" "}
+                        of {purchaseOrders.total ?? filteredOrders.length}{" "}
+                        entries
+                    </div>
+                    <Pagination links={purchaseOrders.links ?? []} />
                 </div>
             </div>
         </AuthenticatedLayout>

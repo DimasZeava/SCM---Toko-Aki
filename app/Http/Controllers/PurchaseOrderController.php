@@ -5,47 +5,134 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PurchaseOrderController extends Controller
 {
-    public function index(Request $request) {
-        $products = Product::all();
-        $purchaseOrders = $products;
+    public function index(Request $request)
+    {
+        $per_page = $request->input('per_page', 5); // Default to 5 items per page
+        $purchaseOrders = PurchaseOrder::with('supplier','retail')->orderBy('created_at', 'desc')->paginate($per_page);
         return Inertia::render('Retail/PurchaseOrders/Index', [
             'title' => 'Purchase Orders',
-            'products' => $products,
             'purchaseOrders' => $purchaseOrders,
+        ]);
+    }
+
+    public function create()
+    {
+        $suppliers = User::role('Supplier')->get();
+        $products = Product::with('supplier')->get();
+        return Inertia::render('Retail/PurchaseOrders/Create', [
+            'title' => 'Create Purchase Order',
+            'products' => $products,
+            'suppliers' => $suppliers,
+        ]);
+    }
+
+    public function edit($id)
+    {
+        $suppliers = User::role('Supplier')->get();
+        $products = Product::all();
+        $purchaseOrder = PurchaseOrder::with(['orders.product'])->findOrFail($id);
+        return Inertia::render('Retail/PurchaseOrders/Edit', [
+            'title' => 'Edit Purchase Order',
+            'purchaseOrder' => $purchaseOrder,
+            'products' => $products,
+            'suppliers' => $suppliers,
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'supplier_id' => 'required|exists:users,id',
+            'status' => 'required|string',
+            'total_amount' => 'required|numeric|min:0',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0',
         ]);
 
-        $supplier = \App\Models\User::role('Supplier')->first();
-
-        PurchaseOrder::create([
+        // Simpan PO utama
+        $purchaseOrder = PurchaseOrder::create([
             'retail_id' => Auth::id(),
-            'supplier_id' => $supplier ? $supplier->id : null,
-            'total_amount' => Product::find($validated['product_id'])->price * $validated['quantity'],
-            'status' => 'pending',
+            'supplier_id' => $validated['supplier_id'],
+            'status' => $validated['status'],
+            'total_amount' => $validated['total_amount'],
         ]);
 
-        Order::create([
-            'po_id' => PurchaseOrder::latest()->first()->id,
-            'product_id' => $validated['product_id'],
-            'quantity' => $validated['quantity'],
-            'total_price' => Product::find($validated['product_id'])->price * $validated['quantity'],
-            'status' => 'pending',
-            'shipping_address' => $request->input('shipping_address', 'Default Address'),
+        // Simpan detail produk ke tabel orders
+        foreach ($validated['items'] as $item) {
+            Order::create([
+                'po_id' => $purchaseOrder->id,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'total_price' => $item['price'] * $item['quantity'],
+                'status' => 'pending', // atau sesuai kebutuhan
+                'shipping_address' => '', // isi jika ada
+            ]);
+        }
+
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order created successfully!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'supplier_id' => 'required|exists:users,id',
+            'status' => 'required|string',
+            'total_amount' => 'required|numeric|min:0',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0',
         ]);
 
-        return redirect()->back()->with('success', 'Purchase Order created!');
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $purchaseOrder->update([
+            'supplier_id' => $validated['supplier_id'],
+            'status' => $validated['status'],
+            'total_amount' => $validated['total_amount'],
+        ]);
+
+        // Hapus semua detail lama
+        $purchaseOrder->orders()->delete();
+
+        // Simpan detail produk baru
+        foreach ($validated['items'] as $item) {
+            Order::create([
+                'po_id' => $purchaseOrder->id,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'total_price' => $item['price'] * $item['quantity'],
+                'status' => 'pending', // atau sesuai kebutuhan
+                'shipping_address' => '', // isi jika ada
+            ]);
+        }
+
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order updated successfully!');
+    }
+
+    public function show($id)
+    {
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        // Logic to show a specific purchase order
+        return Inertia::render('Retail/PurchaseOrders/Show', [
+            'title' => 'Purchase Order Details',
+            'purchaseOrder' => $purchaseOrder, // Replace with actual data retrieval logic
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $purchaseOrder->delete();
+
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order deleted successfully!');
     }
 }

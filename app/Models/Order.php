@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'po_id',
@@ -17,23 +18,13 @@ class Order extends Model
         'shipping_address',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'quantity' => 'integer',
-            'total_price' => 'decimal:2',
-            'status' => 'string',
-            'shipping_address' => 'string',
-        ];
-    }
-
     public function purchaseOrder()
     {
         return $this->belongsTo(PurchaseOrder::class, 'po_id');
     }
 
     public function product()
-{
-    return $this->belongsTo(\App\Models\Product::class, 'product_id');
-}
+    {
+        return $this->belongsTo(Product::class);
+    }
 }
