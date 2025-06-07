@@ -91,7 +91,7 @@ export default function PurchaseOrderCreate({
 
     return (
         <AuthenticatedLayout>
-            <div className="p-6 max-w-6xl mx-auto">
+            <div className="p-6 max-w-7xl mx-auto">
                 <h1 className="text-2xl font-bold mb-6">Buat Purchase Order</h1>
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Form PO */}

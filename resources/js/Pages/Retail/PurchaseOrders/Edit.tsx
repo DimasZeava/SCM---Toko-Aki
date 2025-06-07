@@ -1,10 +1,15 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { useForm } from '@inertiajs/react';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { useForm } from "@inertiajs/react";
 import React, { useState, useEffect } from "react";
 import { Product } from "@/types/index.d";
 
+interface Supplier {
+    id: number;
+    name: string;
+}
 interface EditProps {
     products: Product[];
+    suppliers: Supplier[];
     purchaseOrder: {
         id: number;
         supplier_id: number;
@@ -24,10 +29,14 @@ interface CartItem {
     quantity: number;
 }
 
-export default function PurchaseOrderEdit({ products, purchaseOrder }: EditProps) {
+export default function PurchaseOrderEdit({
+    products,
+    purchaseOrder,
+    suppliers
+}: EditProps) {
     // Inisialisasi keranjang dari data PO yang sudah ada
     const [cart, setCart] = useState<CartItem[]>(
-        (purchaseOrder.orders ?? []).map(item => ({
+        (purchaseOrder.orders ?? []).map((item) => ({
             product: item.product,
             quantity: item.quantity,
         }))
@@ -100,7 +109,7 @@ export default function PurchaseOrderEdit({ products, purchaseOrder }: EditProps
 
     return (
         <AuthenticatedLayout>
-            <div className="p-6 max-w-6xl mx-auto">
+            <div className="p-6 max-w-7xl mx-auto">
                 <h1 className="text-2xl font-bold mb-6">Edit Purchase Order</h1>
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Form PO */}
@@ -110,16 +119,27 @@ export default function PurchaseOrderEdit({ products, purchaseOrder }: EditProps
                     >
                         <div>
                             <label className="block mb-1 font-medium">
-                                Supplier ID
+                                Nama Supplier
                             </label>
-                            <input
-                                type="number"
+                            <select
                                 className="w-full border rounded px-3 py-2"
                                 value={data.supplier_id}
                                 onChange={(e) =>
-                                    setData("supplier_id", parseInt(e.target.value))
+                                    setData("supplier_id", Number(e.target.value))
                                 }
-                            />
+                            >
+                                <option value="" disabled>
+                                    Pilih Supplier
+                                </option>
+                                {suppliers.map((supplier) => (
+                                    <option
+                                        key={supplier.id}
+                                        value={supplier.id}
+                                    >
+                                        {supplier.name}
+                                    </option>
+                                ))}
+                            </select>
                             {errors.supplier_id && (
                                 <div className="text-red-500 text-sm">
                                     {errors.supplier_id}

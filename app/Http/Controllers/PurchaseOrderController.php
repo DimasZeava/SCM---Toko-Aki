@@ -35,12 +35,14 @@ class PurchaseOrderController extends Controller
 
     public function edit($id)
     {
+        $suppliers = User::role('Supplier')->get();
         $products = Product::all();
         $purchaseOrder = PurchaseOrder::with(['orders.product'])->findOrFail($id);
         return Inertia::render('Retail/PurchaseOrders/Edit', [
             'title' => 'Edit Purchase Order',
             'purchaseOrder' => $purchaseOrder,
             'products' => $products,
+            'suppliers' => $suppliers,
         ]);
     }
 

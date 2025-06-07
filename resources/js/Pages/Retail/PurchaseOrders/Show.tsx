@@ -18,7 +18,7 @@ interface ShowProps {
 export default function PurchaseOrderShow({ purchaseOrder }: ShowProps) {
     return (
         <AuthenticatedLayout>
-            <div className="p-6 max-w-6xl mx-auto">
+            <div className="p-6 max-w-7xl mx-auto">
                 <h1 className="text-2xl font-bold mb-4">Detail Purchase Order</h1>
                 <div className="bg-white rounded shadow p-4 mb-4">
                     <div><b>ID:</b> {purchaseOrder.id}</div>
