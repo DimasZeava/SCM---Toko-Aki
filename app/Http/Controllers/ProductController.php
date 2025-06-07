@@ -8,9 +8,10 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $perPage = $request->input('per_page', 5); // Default to 10 items per page
+        $products = Product::orderBy('created_at', 'desc')->paginate($perPage);
         return Inertia::render('Product/Index', [
             'products' => $products,
         ]);
@@ -40,7 +41,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        
+
     }
 
     public function edit(Product $product)

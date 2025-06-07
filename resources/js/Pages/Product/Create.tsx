@@ -21,7 +21,13 @@ const Create = () => {
   }
 
   return (
-     <AuthenticatedLayout>
+      <AuthenticatedLayout
+          header={
+              <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                  Buat Product Baru
+                </h2>
+            }
+      >
       <h3 className='bold'>Buat Product Baru</h3>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

@@ -22,7 +22,13 @@ const Edit = () => {
   }
 
   return (
-    <AuthenticatedLayout>
+      <AuthenticatedLayout
+      header={
+          <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                  Edit Product
+            </h2>
+      }
+      >
       <Head title="Edit Product" />
       <h3 className="font-bold text-lg mb-4">Edit Product</h3>
       <form onSubmit={handleSubmit}>

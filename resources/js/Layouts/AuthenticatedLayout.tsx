@@ -127,7 +127,7 @@ export default function AuthenticatedLayout({
                     <nav className="flex-1 px-4 py-6 space-y-3">
                         {renderSidebarLinks()}
                     </nav>
-                   
+
                    <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
                             <div className="text-base font-medium">
@@ -193,7 +193,7 @@ export default function AuthenticatedLayout({
                     </header>
                 )}
 
-                <main className="flex-1 p-4">{children}</main>
+                <main className="flex-1 p-4 max-w-full">{children}</main>
             </div>
         </div>
     );
