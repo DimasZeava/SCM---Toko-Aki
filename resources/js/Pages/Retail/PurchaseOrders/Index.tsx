@@ -67,19 +67,19 @@ export default function PurchaseOrderIndex({
     const actions = (po: PurchaseOrder) => (
         <div className="flex space-x-2">
             <Link
-                href={route("purchase-orders.show", po.id)}
+                href={route("retail.purchase-orders.show", po.id)}
                 className="text-blue-600 hover:underline"
             >
                 Lihat
             </Link>
             <Link
-                href={route("purchase-orders.edit", po.id)}
+                href={route("retail.purchase-orders.edit", po.id)}
                 className="text-yellow-600 hover:underline"
             >
                 Edit
             </Link>
             <Link
-                href={route("purchase-orders.destroy", po.id)}
+                href={route("retail.purchase-orders.destroy", po.id)}
                 method="delete"
                 className="text-red-600 hover:underline"
                 as="button"
@@ -98,7 +98,7 @@ export default function PurchaseOrderIndex({
                 <div className="flex justify-between items-center">
                     <SearchBar searchTerm={search} onSearch={setSearch} />
                     <Link
-                        href={route("purchase-orders.create")}
+                        href={route("retail.purchase-orders.create")}
                         className="bg-blue-600 text-white px-4 py-2 rounded"
                     >
                         + Buat Purchase Order

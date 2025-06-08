@@ -1,3 +1,4 @@
+import { PurchaseOrder } from '@/types';
 import { Config } from 'ziggy-js';
 import { PageProps as InertiaPageProps } from '@inertiajs/inertia';
 
@@ -7,6 +8,17 @@ export interface User {
     roles: string[];
     email: string;
     email_verified_at?: string;
+}
+
+export interface PurchaseOrder {
+    id: number;
+    supplier?: {
+        id: number;
+        name: string;
+    };
+    status: string;
+    total_amount: number;
+    created_at: string;
 }
 
 export interface Order {
@@ -40,4 +52,5 @@ export type PageProps<
     csrf_token: string;
     products: Product[];
     orders?: any[];
+    PurchaseOrders? : any[];
 };

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\PurchaseOrder;
 use App\POStatusEnum;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,35 +12,37 @@ class OrderController extends Controller
 {
     public function index(request $request)
     {
-    $perPage = $request->input('per_page', 5);
-    $orders = Order::with('product')
-        ->orderBy('created_at', 'desc')
-        ->paginate($perPage);
+        $perPage = $request->input('per_page', 5);
+        $purchaseOrders = PurchaseOrder::with('retail')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
         return Inertia::render('Supplier/Orders/Index', [
-            'title' => 'Orders',
-            'orders' => $orders,
+            'purchaseOrders' => $purchaseOrders,
         ]);
     }
 
     public function show(Order $order)
     {
+        $order->load(['purchaseOrder.retail', 'purchaseOrder.supplier', 'purchaseOrder.orders.product']);
         return Inertia::render('Supplier/Orders/Show', [
-            'title' => 'Order Details',
-            'order' => $order,
+            'purchaseOrder' => $order->purchaseOrder,
         ]);
     }
 
-    public function answer(Request $request, Order $order)
+    public function answer(Request $request, PurchaseOrder $purchaseOrder, Order $order)
     {
         $validated = $request->validate([
-            'status' => 'required|in:approved,rejected',
+        'status' => ['required', 'string', 'in:approved,rejected'], // or use POStatusEnum::values()
         ]);
 
-        $order->status = $validated['status'] === 'approved'
-            ? POStatusEnum::Approved->value
-            : POStatusEnum::Rejected->value;
+        $status = POStatusEnum::from($validated['status']);
+        $purchaseOrder->status = $status->value;
+        $purchaseOrder->save();
+
+        $order->status = $status->value;
         $order->save();
 
-        return redirect()->back()->with('success', 'Order status updated!');
+        return redirect()->back()->with('success', 'Status updated successfully.');
     }
 }

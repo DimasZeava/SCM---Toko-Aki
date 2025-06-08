@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\User;
+use App\POStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -50,7 +51,6 @@ class PurchaseOrderController extends Controller
     {
         $validated = $request->validate([
             'supplier_id' => 'required|exists:users,id',
-            'status' => 'required|string',
             'total_amount' => 'required|numeric|min:0',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
@@ -62,7 +62,7 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = PurchaseOrder::create([
             'retail_id' => Auth::id(),
             'supplier_id' => $validated['supplier_id'],
-            'status' => $validated['status'],
+            'status' => POStatusEnum::Pending->value,
             'total_amount' => $validated['total_amount'],
         ]);
 
@@ -73,12 +73,12 @@ class PurchaseOrderController extends Controller
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'total_price' => $item['price'] * $item['quantity'],
-                'status' => 'pending', // atau sesuai kebutuhan
-                'shipping_address' => '', // isi jika ada
+                'status' => 'pending',
+                'shipping_address' => '',
             ]);
         }
 
-        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order created successfully!');
+        return redirect()->route('retail.purchase-orders.index')->with('success', 'Purchase Order created successfully!');
     }
 
     public function update(Request $request, $id)
@@ -115,7 +115,7 @@ class PurchaseOrderController extends Controller
             ]);
         }
 
-        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order updated successfully!');
+        return redirect()->route('retail.purchase-orders.index')->with('success', 'Purchase Order updated successfully!');
     }
 
     public function show($id)
@@ -133,6 +133,6 @@ class PurchaseOrderController extends Controller
         $purchaseOrder = PurchaseOrder::findOrFail($id);
         $purchaseOrder->delete();
 
-        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order deleted successfully!');
+        return redirect()->route('retail.purchase-orders.index')->with('success', 'Purchase Order deleted successfully!');
     }
 }

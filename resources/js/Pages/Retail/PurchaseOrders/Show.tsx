@@ -29,7 +29,7 @@ export default function PurchaseOrderShow({ purchaseOrder }: ShowProps) {
                     <div><b>Dibuat:</b> {(new Date(purchaseOrder.created_at)).toLocaleString()}</div>
                 </div>
                 <Link
-                    href={route("purchase-orders.index")}
+                    href={route("retail.purchase-orders.index")}
                     className="inline-block mt-4 text-blue-600 hover:underline"
                 >
                     &larr; Kembali ke Daftar PO

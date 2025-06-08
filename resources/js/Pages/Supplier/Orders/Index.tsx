@@ -1,32 +1,32 @@
 import DataTable from '@/Components/DataTable';
 import Pagination from '@/Components/Pagination';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Order, PageProps } from '@/types';
+import { PurchaseOrder, PageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
-export default function Orders({ auth }: PageProps) {
-    const { orders } = usePage().props as { 
-        orders: {
-            data: Order[];
+export default function PurchaseOrders({ auth }: PageProps) {
+    const { purchaseOrders = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0, links: [] } } = usePage().props as {
+        purchaseOrders: {
+            data: PurchaseOrder[];
             current_page: number;
             last_page: number;
             per_page: number;
             total: number;
             links: { url: string | null; label: string; active: boolean }[];
-        }; 
+        };
     };
     const columns = [
         { label: 'ID', render: (item: any) => item.id },
-        { label: 'Produk', render: (item: any) => item.product?.name || 'N/A' },
-        { label: 'Jumlah', render: (item: any) => item.quantity },
+        { label: 'Retail', render: (item: any) => item.retail?.name || 'N/A' },
         { label: 'Status', render: (item: any) => item.status },
+        { label: 'Total', render: (item: any) => `Rp ${item.total_amount}` },
         { label: 'Tanggal', render: (item: any) => new Date(item.created_at).toLocaleDateString() },
-    ]
+    ];
 
-    const actions = (order: any) => (
+    const actions = (po: any) => (
         <div className="flex space-x-2">
             <Link
-                href={route('supplier.orders.show', order.id)}
+                href={route('supplier.orders.show', po.id)}
                 className="text-blue-500 hover:underline"
             >
                 Detail
@@ -37,25 +37,25 @@ export default function Orders({ auth }: PageProps) {
     return (
         <AuthenticatedLayout>
             <div className="p-6">
-                <h1 className="text-2xl font-bold">Manajemen Order</h1>
+                <h1 className="text-2xl font-bold">Manajemen Purchase Order</h1>
                 <p>Selamat datang, {auth.user.name}</p>
                 <div className="mt-6">
-                    <h2 className="font-semibold mb-2">Daftar Order</h2>
+                    <h2 className="font-semibold mb-2">Daftar Purchase Order</h2>
                    <DataTable
-                        data={orders.data}
+                        data={purchaseOrders.data}
                         columns={columns}
                         actions={actions}/>
                     <div className="flex justify-between items-center text-sm text-gray-600 mt-2">
                     <div>
                         Showing{" "}
-                        {(orders.current_page - 1) * orders.per_page + 1} to{" "}
+                        {(purchaseOrders.current_page - 1) * purchaseOrders.per_page + 1} to{" "}
                         {Math.min(
-                            orders.current_page * orders.per_page,
-                            orders.total
+                            purchaseOrders.current_page * purchaseOrders.per_page,
+                            purchaseOrders.total
                         )}{" "}
-                        of {orders.total} entries
+                        of {purchaseOrders.total} entries
                     </div>
-                    <Pagination links={orders.links} />
+                    <Pagination links={purchaseOrders.links} />
                 </div>
                 </div>
             </div>

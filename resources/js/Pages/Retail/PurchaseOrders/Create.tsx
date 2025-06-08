@@ -86,7 +86,7 @@ export default function PurchaseOrderCreate({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route("purchase-orders.store"));
+        post(route("retail.purchase-orders.store"));
     };
 
     return (
@@ -128,7 +128,7 @@ export default function PurchaseOrderCreate({
                                 </div>
                             )}
                         </div>
-                        <div>
+                        {/* <div>
                             <label className="block mb-1 font-medium">
                                 Status
                             </label>
@@ -148,7 +148,7 @@ export default function PurchaseOrderCreate({
                                     {errors.status}
                                 </div>
                             )}
-                        </div>
+                        </div> */}
                         <div>
                             <label className="block mb-1 font-medium">
                                 Total Amount
