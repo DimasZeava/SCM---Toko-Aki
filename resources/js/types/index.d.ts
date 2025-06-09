@@ -1,3 +1,4 @@
+import { Payment } from './index.d';
 import { PurchaseOrder } from '@/types';
 import { Config } from 'ziggy-js';
 import { PageProps as InertiaPageProps } from '@inertiajs/inertia';
@@ -18,6 +19,15 @@ export interface PurchaseOrder {
     };
     status: string;
     total_amount: number;
+    created_at: string;
+}
+
+export interface Payment {
+    id: number;
+    po_id: number;
+    amount: number;
+    payment_method: string;
+    status: string;
     created_at: string;
 }
 
@@ -52,5 +62,6 @@ export type PageProps<
     csrf_token: string;
     products: Product[];
     orders?: any[];
+    Payments?: Payment[];
     PurchaseOrders? : any[];
 };

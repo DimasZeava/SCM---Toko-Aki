@@ -17,21 +17,20 @@ const Show = () => {
     };
   };
 
-  const { data, setData, put, processing, errors } = useForm({
-  status: '',
+ type FormData = {
+    status: string;
+  };
+
+  const { data, setData, put, processing, errors } = useForm<FormData>({
+    status: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const orderId = purchaseOrder.orders?.[0]?.id;
-    if (!orderId) {
-      alert('Order ID not found.');
-      return;
-    }
+  const handleStatusChange = (status: 'approved' | 'rejected') => {
+    setData('status', status);
     put(
-      route('supplier.orders.answer', { purchaseOrder: purchaseOrder.id, order: orderId }),
+      route('supplier.purchase-orders.answer', { purchaseOrder: purchaseOrder.id }),
       {
-        data: { status: data.status },
+        onSuccess: () => setData('status', ''),
       }
     );
   };
@@ -45,7 +44,7 @@ const Show = () => {
 
   return (
     <AuthenticatedLayout>
-      <div className="p-6">
+      <div className="p-6 card bg-white shadow-md rounded-lg">
         <h1 className="text-xl font-bold mb-4">Detail Purchase Order</h1>
         <div className="mb-4">
           <div>Retail: {purchaseOrder.retail?.name}</div>
@@ -58,26 +57,26 @@ const Show = () => {
           data={purchaseOrder.orders ?? []}
           columns={columns}
         />
-        <form className="flex gap-2 items-center mt-4" onSubmit={handleSubmit}>
-          <select
-            name="status"
-            value={data.status}
-            onChange={e => setData('status', e.target.value)}
-            className="border rounded px-2 py-1"
-            required
-          >
-            <option value="">Pilih Status</option>
-            <option value="approved">Setujui</option>
-            <option value="rejected">Tolak</option>
-          </select>
-          <button
-            type="submit"
-            disabled={processing}
-            className="bg-blue-600 hover:bg-blue-400 text-white px-4 py-2 rounded"
-          >
-            Update Status
-          </button>
-        </form>
+        {!['approved', 'rejected'].includes(purchaseOrder.status) && (
+          <div className="flex gap-2 mt-4">
+            <button
+              type="button"
+              onClick={() => handleStatusChange('approved')}
+              disabled={processing}
+              className="bg-green-600 hover:bg-green-400 text-white px-4 py-2 rounded"
+            >
+              Setujui Purchase Order
+            </button>
+            <button
+              type="button"
+              onClick={() => handleStatusChange('rejected')}
+              disabled={processing}
+              className="bg-red-600 hover:bg-red-400 text-white px-4 py-2 rounded"
+            >
+              Tolak Purchase Order
+            </button>
+          </div>
+        )}
         {errors.status && <div className="text-red-500">{errors.status}</div>}
       </div>
       <Link

@@ -42,8 +42,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/supplier/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard');
         Route::resource('supplier/products', ProductController::class);
         Route::get('supplier/orders', [OrderController::class, 'index'])->name('supplier.orders.index');
-        Route::get('supplier/orders/{order}', [OrderController::class, 'show'])->name('supplier.orders.show');
-        Route::put('/supplier/orders/{purchaseOrder}/answer/{order}', [OrderController::class, 'answer'])->name('supplier.orders.answer');
+        Route::get('supplier/purchase-orders/{order}', [OrderController::class, 'show'])->name('supplier.orders.show');
+        Route::put('/supplier/purchase-orders/{purchaseOrder}/answer', [OrderController::class, 'answer'])->name('supplier.purchase-orders.answer');
     });
 
     // Route untuk role Admin

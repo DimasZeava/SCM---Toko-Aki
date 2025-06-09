@@ -73,7 +73,6 @@ class PurchaseOrderController extends Controller
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'total_price' => $item['price'] * $item['quantity'],
-                'status' => 'pending',
                 'shipping_address' => '',
             ]);
         }
@@ -110,7 +109,6 @@ class PurchaseOrderController extends Controller
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
                 'total_price' => $item['price'] * $item['quantity'],
-                'status' => 'pending', // atau sesuai kebutuhan
                 'shipping_address' => '', // isi jika ada
             ]);
         }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\PurchaseOrder;
 use App\POStatusEnum;
 use Illuminate\Http\Request;
@@ -22,26 +23,33 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show(Order $order)
+    public function show($id)
     {
-        $order->load(['purchaseOrder.retail', 'purchaseOrder.supplier', 'purchaseOrder.orders.product']);
+        $purchaseOrder = PurchaseOrder::with(['retail', 'supplier', 'orders.product'])->findOrFail($id);
+
         return Inertia::render('Supplier/Orders/Show', [
-            'purchaseOrder' => $order->purchaseOrder,
+            'purchaseOrder' => $purchaseOrder,
         ]);
     }
 
-    public function answer(Request $request, PurchaseOrder $purchaseOrder, Order $order)
+    public function answer(Request $request, PurchaseOrder $purchaseOrder)
     {
         $validated = $request->validate([
-        'status' => ['required', 'string', 'in:approved,rejected'], // or use POStatusEnum::values()
+        'status' => ['required', 'string', 'in:approved,rejected'],
         ]);
 
         $status = POStatusEnum::from($validated['status']);
         $purchaseOrder->status = $status->value;
         $purchaseOrder->save();
 
-        $order->status = $status->value;
-        $order->save();
+        if ($status->value === 'approved') {
+            Payment::create([
+                'po_id' => $purchaseOrder->id,
+                'amount' => $purchaseOrder->total_amount,
+                'payment_method' => '',
+                'status' => 'approved',
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Status updated successfully.');
     }

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(1);
             $table->decimal('total_price', 10, 2);
-            $table->string('status')->default('pending');
             $table->string('shipping_address')->nullable();
             $table->timestamps();
         });

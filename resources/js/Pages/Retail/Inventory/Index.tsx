@@ -99,7 +99,7 @@ export default function InventoryIndex() {
                 <div className="flex justify-between items-center">
                     <SearchBar searchTerm={search} onSearch={setSearch} />
                     <Link
-                        href={route("purchase-orders.create")}
+                        href={route("retail.purchase-orders.create")}
                         className="bg-blue-600 text-white px-4 py-2 rounded"
                     >
                         + Tambah Inventori

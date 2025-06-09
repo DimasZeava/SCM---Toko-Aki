@@ -53,7 +53,19 @@ export default function PurchaseOrderIndex({
             label: "Supplier Name",
             render: (po: PurchaseOrder) => po.supplier?.name ?? "-",
         },
-        { label: "Status", render: (po: PurchaseOrder) => po.status },
+        { label: "Status", render: (po: PurchaseOrder) => (
+            <span
+                className={
+                    po.status.toLowerCase() === "approved"
+                        ? "text-green-600 font-semibold"
+                        : po.status.toLowerCase() === "rejected"
+                        ? "text-red-600 font-semibold"
+                        : ""
+                }
+            >
+                {po.status}
+            </span>
+        ), },
         {
             label: "Total",
             render: (po: PurchaseOrder) => `Rp ${po.total_amount}`,
@@ -64,30 +76,45 @@ export default function PurchaseOrderIndex({
         },
     ];
 
-    const actions = (po: PurchaseOrder) => (
-        <div className="flex space-x-2">
-            <Link
-                href={route("retail.purchase-orders.show", po.id)}
-                className="text-blue-600 hover:underline"
-            >
-                Lihat
-            </Link>
-            <Link
-                href={route("retail.purchase-orders.edit", po.id)}
-                className="text-yellow-600 hover:underline"
-            >
-                Edit
-            </Link>
-            <Link
-                href={route("retail.purchase-orders.destroy", po.id)}
-                method="delete"
-                className="text-red-600 hover:underline"
-                as="button"
-            >
-                Hapus
-            </Link>
-        </div>
-    );
+    const actions = (po: PurchaseOrder) => {
+    const status = po.status.toLowerCase();
+        if (status === "approved" || status === "rejected") {
+            return (
+                <div className="flex space-x-2">
+                    <Link
+                        href={route("retail.purchase-orders.show", po.id)}
+                        className="text-blue-600 hover:underline"
+                    >
+                        Lihat
+                    </Link>
+                </div>
+            );
+        }
+        return (
+            <div className="flex space-x-2">
+                <Link
+                    href={route("retail.purchase-orders.show", po.id)}
+                    className="text-blue-600 hover:underline"
+                >
+                    Lihat
+                </Link>
+                <Link
+                    href={route("retail.purchase-orders.edit", po.id)}
+                    className="text-yellow-600 hover:underline"
+                >
+                    Edit
+                </Link>
+                <Link
+                    href={route("retail.purchase-orders.destroy", po.id)}
+                    method="delete"
+                    className="text-red-600 hover:underline"
+                    as="button"
+                >
+                    Hapus
+                </Link>
+            </div>
+        );
+    };
 
     return (
         <AuthenticatedLayout>
