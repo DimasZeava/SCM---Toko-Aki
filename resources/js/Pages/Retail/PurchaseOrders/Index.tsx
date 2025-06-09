@@ -108,6 +108,8 @@ export default function PurchaseOrderIndex({
                     columns={columns}
                     data={filteredOrders}
                     actions={actions}
+                    currentPage={purchaseOrders.current_page}
+                    perPage={purchaseOrders.per_page}
                 />
                 <div className="flex justify-between items-center text-sm text-gray-600 mt-2">
                     <div>

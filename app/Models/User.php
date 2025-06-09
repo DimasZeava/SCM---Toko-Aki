@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class, 'supplier_id');
     }
+
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class, 'retail_id');
+    }
 }

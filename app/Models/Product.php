@@ -9,6 +9,7 @@ class Product extends Model
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
+        'supplier_id',
         'name',
         'description',
         'price',
