@@ -51,8 +51,8 @@ export default function AuthenticatedLayout({
                         Dashboard
                     </NavLink>
                     <NavLink
-                        href={route("purchase-orders.index")}
-                        active={route().current("purchase-orders.index")}
+                        href={route("retail.purchase-orders.index")}
+                        active={route().current("retail.purchase-orders.index")}
                     >
                         Purchase Order
                     </NavLink>
@@ -91,8 +91,8 @@ export default function AuthenticatedLayout({
                         Produk
                     </NavLink>
                     <NavLink
-                        href={route("orders.index")}
-                        active={route().current("orders.index")}
+                        href={route("supplier.orders.index")}
+                        active={route().current("supplier.orders.index")}
                     >
                         Order
                     </NavLink>

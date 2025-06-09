@@ -86,7 +86,7 @@ export default function PurchaseOrderCreate({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route("purchase-orders.store"));
+        post(route("retail.purchase-orders.store"));
     };
 
     return (

@@ -25,8 +25,14 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     // Route untuk role Retail
     Route::middleware(['role:Retail'])->group(function () {
-        Route::get('retail/dashboard', [RetailDashboardController::class, 'index'])->name('dashboard'); // default dashboard retail
-        Route::resource('retail/purchase-orders', PurchaseOrderController::class);
+        Route::get('retail/dashboard', [RetailDashboardController::class, 'index'])->name('dashboard');
+        Route::get('retail/purchase-orders', [PurchaseOrderController::class, 'index'])->name('retail.purchase-orders.index');
+        Route::post('retail/purchase-orders', [PurchaseOrderController::class, 'store'])->name('retail.purchase-orders.store');
+        Route::get('retail/purchase-orders/create', [PurchaseOrderController::class, 'create'])->name('retail.purchase-orders.create');
+        Route::get('retail/purchase-orders/{id}/edit', [PurchaseOrderController::class, 'edit'])->name('retail.purchase-orders.edit');
+        Route::put('retail/purchase-orders/{id}', [PurchaseOrderController::class, 'update'])->name('retail.purchase-orders.update');
+        Route::delete('retail/purchase-orders/{id}', [PurchaseOrderController::class, 'destroy'])->name('retail.purchase-orders.destroy');
+        Route::get('retail/purchase-orders/{id}', [PurchaseOrderController::class, 'show'])->name('retail.purchase-orders.show');
         Route::resource('retail/payments', PaymentController::class);
         Route::resource('retail/inventory', InventoryController::class);
     });
@@ -35,7 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:Supplier'])->group(function () {
         Route::get('/supplier/dashboard', [SupplierDashboardController::class, 'index'])->name('supplier.dashboard');
         Route::resource('supplier/products', ProductController::class);
-        Route::resource('supplier/orders', OrderController::class);
+        Route::get('supplier/orders', [OrderController::class, 'index'])->name('supplier.orders.index');
+        Route::get('supplier/orders/{order}', [OrderController::class, 'show'])->name('supplier.orders.show');
+        Route::put('/supplier/orders/{purchaseOrder}/answer/{order}', [OrderController::class, 'answer'])->name('supplier.orders.answer');
     });
 
     // Route untuk role Admin
