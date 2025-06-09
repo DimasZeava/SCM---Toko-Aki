@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 5); // Default to 10 items per page
-        $products = Product::orderBy('created_at', 'desc')->paginate($perPage);
+        $perPage = $request->input('per_page', 10);
+        $products = Product::with('supplier')->orderBy('created_at', 'desc')->paginate($perPage);
         return Inertia::render('Product/Index', [
             'products' => $products,
         ]);
@@ -24,14 +25,14 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-            $validated = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
             'sku' => 'required|string|max:255',
         ]);
-
+        $validated['supplier_id'] = Auth::id();
         // Create the product
         Product::create($validated);
 
@@ -39,16 +40,13 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created!');
     }
 
-    public function show($id)
-    {
-
-    }
+    public function show($id) {}
 
     public function edit(Product $product)
     {
         return Inertia::render('Product/Edit', [
-        'product' => $product,
-    ]);
+            'product' => $product,
+        ]);
     }
 
     public function update(Request $request, Product $product)
@@ -60,6 +58,9 @@ class ProductController extends Controller
             'stock' => 'required|integer',
             'sku' => 'required|string|max:255',
         ]);
+        if ($product->supplier_id !== Auth::id()) {
+        abort(403);
+    }
         $product->update($validated);
         return redirect()->route('products.index')->with('success', 'Product updated!');
     }

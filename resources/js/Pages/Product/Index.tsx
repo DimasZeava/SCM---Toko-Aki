@@ -97,6 +97,8 @@ const Index = () => {
                     columns={columns}
                     data={filteredProducts}
                     actions={actions}
+                    currentPage={products.current_page}
+                    perPage={products.per_page}
                 />
                 <div className="flex justify-between items-center text-sm text-gray-600 mt-2">
                     <div>

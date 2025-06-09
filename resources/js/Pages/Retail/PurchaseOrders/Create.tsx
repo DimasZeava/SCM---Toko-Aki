@@ -130,34 +130,13 @@ export default function PurchaseOrderCreate({
                         </div>
                         <div>
                             <label className="block mb-1 font-medium">
-                                Status
-                            </label>
-                            <select
-                                className="w-full border rounded px-3 py-2"
-                                value={data.status}
-                                onChange={(e) =>
-                                    setData("status", e.target.value)
-                                }
-                            >
-                                <option value="pending">Pending</option>
-                                <option value="approved">Approved</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                            {errors.status && (
-                                <div className="text-red-500 text-sm">
-                                    {errors.status}
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block mb-1 font-medium">
                                 Total Amount
                             </label>
                             <input
                                 type="number"
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full border rounded px-3 py-2 bg-gray-100 text-slate-500"
                                 value={totalAmount}
-                                readOnly
+                                disabled
                             />
                         </div>
                         <button

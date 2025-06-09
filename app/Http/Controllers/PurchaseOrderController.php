@@ -14,7 +14,7 @@ class PurchaseOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $per_page = $request->input('per_page', 5); // Default to 5 items per page
+        $per_page = $request->input('per_page', 10); 
         $purchaseOrders = PurchaseOrder::with('supplier','retail')->orderBy('created_at', 'desc')->paginate($per_page);
         return Inertia::render('Retail/PurchaseOrders/Index', [
             'title' => 'Purchase Orders',

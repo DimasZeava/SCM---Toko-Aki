@@ -1,21 +1,45 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, router, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import Dropdown from "@/Components/Dropdown";
+import NavLink from "@/Components/NavLink";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import { Link, router, usePage } from "@inertiajs/react";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function AuthenticatedLayout({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
+    const { flash } = usePage().props as any;
+
+    useEffect(() => {
+        if (flash.success) {
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: flash.success,
+                timer: 3000,
+                showConfirmButton: true,
+            });
+        }
+
+        if (flash.error) {
+            Swal.fire({
+                icon: "error",
+                title: "Gagal",
+                text: flash.error,
+                timer: 3000,
+                showConfirmButton: true,
+            });
+        }
+    }, [flash]);
     const { user } = usePage().props.auth;
     console.log("Authenticated user:", user);
     // Fungsi bantu untuk cek apakah user punya role tertentu
     const hasRole = (role: string) => user.roles.includes(role);
     console.log("User roles:", user.roles);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
+    const { lowStockCount } = usePage().props as any;
     const renderSidebarLinks = () => {
         if (hasRole("Retail")) {
             return (
@@ -43,6 +67,11 @@ export default function AuthenticatedLayout({
                         active={route().current("inventory.index")}
                     >
                         Inventori
+                        {lowStockCount > 0 && (
+                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-200 text-yellow-800">
+                                {lowStockCount}
+                            </span>
+                        )}
                     </NavLink>
                 </div>
             );
@@ -128,7 +157,7 @@ export default function AuthenticatedLayout({
                         {renderSidebarLinks()}
                     </nav>
 
-                   <div className="border-t border-gray-100 px-6 py-4">
+                    <div className="border-t border-gray-100 px-6 py-4">
                         <div className="mb-2">
                             <div className="text-base font-medium">
                                 {user.name}

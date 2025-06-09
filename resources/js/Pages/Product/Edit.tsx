@@ -3,7 +3,7 @@ import { useForm, usePage, Head } from '@inertiajs/react'
 import { Product } from '@/types'
 
 const Edit = () => {
-  const { product } = usePage().props as { product: Product }
+  const { product } = usePage().props as any as{ product: Product }
   const { data, setData, put, processing, errors } = useForm({
     name: product.name || '',
     description: product.description || '',
@@ -13,7 +13,7 @@ const Edit = () => {
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setData(e.target.name, e.target.value)
+    setData(e.target.name as keyof typeof data, e.target.value)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
