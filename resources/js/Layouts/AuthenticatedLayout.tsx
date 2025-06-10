@@ -45,8 +45,8 @@ export default function AuthenticatedLayout({
             return (
                 <div className="flex flex-col space-y-2">
                     <NavLink
-                        href={route("dashboard")}
-                        active={route().current("dashboard")}
+                        href={route("retail.dashboard")}
+                        active={route().current("retail.dashboard")}
                     >
                         Dashboard
                     </NavLink>

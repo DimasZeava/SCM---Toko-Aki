@@ -25,7 +25,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     // Route untuk role Retail
     Route::middleware(['role:Retail'])->group(function () {
-        Route::get('retail/dashboard', [RetailDashboardController::class, 'index'])->name('dashboard');
+        Route::get('retail/dashboard', [RetailDashboardController::class, 'index'])->name('retail.dashboard');
         Route::get('retail/purchase-orders', [PurchaseOrderController::class, 'index'])->name('retail.purchase-orders.index');
         Route::post('retail/purchase-orders', [PurchaseOrderController::class, 'store'])->name('retail.purchase-orders.store');
         Route::get('retail/purchase-orders/create', [PurchaseOrderController::class, 'create'])->name('retail.purchase-orders.create');
