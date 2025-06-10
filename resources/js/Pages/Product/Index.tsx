@@ -73,6 +73,8 @@ const Index = () => {
         </div>
     );
 
+    const { pendingCount, statusMessage } = usePage().props as any;
+
     return (
         <AuthenticatedLayout
             header={
@@ -81,6 +83,11 @@ const Index = () => {
                 </h2>
             }
         >
+            {pendingCount > 0 && (
+                        <div className="bg-yellow-100 text-yellow-800 p-4 rounded mb-4">
+                            {statusMessage}
+                        </div>
+                    )}
             <Head title="Product List" />
             <div className="space-y-4">
                 <h1 className="text-xl font-bold">Product List</h1>

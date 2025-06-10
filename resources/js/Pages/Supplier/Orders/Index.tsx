@@ -34,12 +34,19 @@ export default function PurchaseOrders({ auth }: PageProps) {
         </div>
     );
 
+    const {pendingCount, statusMessage} = usePage().props as any;
+
     return (
         <AuthenticatedLayout>
             <div className="p-6">
                 <h1 className="text-2xl font-bold">Manajemen Purchase Order</h1>
                 <p>Selamat datang, {auth.user.name}</p>
                 <div className="mt-6">
+                    {pendingCount > 0 && (
+                        <div className="bg-yellow-100 text-yellow-800 p-4 rounded mb-4">
+                            {statusMessage}
+                        </div>
+                    )}
                     <h2 className="font-semibold mb-2">Daftar Purchase Order</h2>
                    <DataTable
                         data={purchaseOrders.data}

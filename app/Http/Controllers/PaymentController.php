@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventory;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseOrder;
 use Illuminate\Http\Request;
@@ -61,21 +62,31 @@ class PaymentController extends Controller
             ->where('product_id', $order->product_id)
             ->first();
 
-        if ($inventory) {
-            $inventory->quantity += $order->quantity;
-            if ($inventory->quantity < 0) {
-                $inventory->quantity = 0;
+            if ($inventory) {
+                $inventory->quantity += $order->quantity;
+                if ($inventory->quantity < 0) {
+                    $inventory->quantity = 0;
+                }
+                $inventory->save();
+            } else {
+                Inventory::create([
+                    'retail_id' => $payment->retail_id ?? 1,
+                    'product_id' => $order->product_id,
+                    'quantity' => $order->quantity,
+                    'cost_price' => 0,
+                    'selling_price' => 0,
+                ]);    
             }
-            $inventory->save();
-        } else {
-            Inventory::create([
-                'retail_id' => $payment->retail_id ?? 1,
-                'product_id' => $order->product_id,
-                'quantity' => $order->quantity,
-                'cost_price' => 0,
-                'selling_price' => 0,
-            ]);
-        }
+            
+            // Update supplier product stock
+            $supplierProduct = Product::where('id', $order->product_id)->first();
+            if ($supplierProduct) {
+                $supplierProduct->stock -= $order->quantity;
+                if ($supplierProduct->stock < 0) {
+                    $supplierProduct->stock = 0;
+                }
+                $supplierProduct->save();
+            }
         }
     }
 

@@ -77,7 +77,6 @@ const Show = () => {
             </button>
           </div>
         )}
-        {errors.status && <div className="text-red-500">{errors.status}</div>}
       </div>
       <Link
         href={route('supplier.orders.index')}

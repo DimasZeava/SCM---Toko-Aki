@@ -18,8 +18,14 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
+            
+        $pendingCount = PurchaseOrder::where('status', POStatusEnum::Pending->value)->count();
+        $statusMessage = "Ada {$pendingCount} purchase order yang menunggu persetujuan anda.";
+
         return Inertia::render('Supplier/Orders/Index', [
             'purchaseOrders' => $purchaseOrders,
+            'pendingCount' => $pendingCount,
+            'statusMessage' => $statusMessage,
         ]);
     }
 

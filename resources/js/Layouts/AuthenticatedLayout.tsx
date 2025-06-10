@@ -39,7 +39,7 @@ export default function AuthenticatedLayout({
     const hasRole = (role: string) => user.roles.includes(role);
     console.log("User roles:", user.roles);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { lowStockCount } = usePage().props as any;
+    const { lowStockCount, pendingCount } = usePage().props as any;
     const renderSidebarLinks = () => {
         if (hasRole("Retail")) {
             return (
@@ -95,6 +95,11 @@ export default function AuthenticatedLayout({
                         active={route().current("supplier.orders.index")}
                     >
                         Order
+                        {pendingCount > 0 && (
+                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-200 text-yellow-800">
+                                {pendingCount}
+                            </span>
+                        )}
                     </NavLink>
                 </div>
             );
