@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\RetailDashboardController;
 use App\Http\Controllers\SupplierDashboardController;
+use App\Http\Controllers\SupplierFinanceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
         Route::get('supplier/orders', [OrderController::class, 'index'])->name('supplier.orders.index');
         Route::get('supplier/purchase-orders/{order}', [OrderController::class, 'show'])->name('supplier.orders.show');
         Route::put('/supplier/purchase-orders/{purchaseOrder}/answer', [OrderController::class, 'answer'])->name('supplier.purchase-orders.answer');
+        Route::get('supplier/finance', [SupplierFinanceController::class, 'index'])->name('supplier.finance.index');
     });
 
     // Route untuk role Admin
@@ -56,7 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-   
+
 
 });
 

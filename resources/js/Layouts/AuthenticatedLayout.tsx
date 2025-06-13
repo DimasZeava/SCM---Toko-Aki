@@ -101,6 +101,12 @@ export default function AuthenticatedLayout({
                             </span>
                         )}
                     </NavLink>
+                    <NavLink
+                        href={route("supplier.finance.index")}
+                        active={route().current("supplier.finance.index")}
+                    >
+                        Keuangan
+                    </NavLink>
                 </div>
             );
         } else if (hasRole("Admin")) {

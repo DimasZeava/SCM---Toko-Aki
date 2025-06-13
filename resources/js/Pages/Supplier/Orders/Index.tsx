@@ -1,11 +1,20 @@
-import DataTable from '@/Components/DataTable';
-import Pagination from '@/Components/Pagination';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { PurchaseOrder, PageProps } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import DataTable from "@/Components/DataTable";
+import Pagination from "@/Components/Pagination";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { PurchaseOrder, PageProps } from "@/types";
+import { Link, usePage } from "@inertiajs/react";
 
 export default function PurchaseOrders({ auth }: PageProps) {
-    const { purchaseOrders = { data: [], current_page: 1, last_page: 1, per_page: 10, total: 0, links: [] } } = usePage().props as {
+    const {
+        purchaseOrders = {
+            data: [],
+            current_page: 1,
+            last_page: 1,
+            per_page: 10,
+            total: 0,
+            links: [],
+        },
+    } = usePage().props as any as {
         purchaseOrders: {
             data: PurchaseOrder[];
             current_page: number;
@@ -16,17 +25,35 @@ export default function PurchaseOrders({ auth }: PageProps) {
         };
     };
     const columns = [
-        { label: 'ID', render: (item: any) => item.id },
-        { label: 'Retail', render: (item: any) => item.retail?.name || 'N/A' },
-        { label: 'Status', render: (item: any) => item.status },
-        { label: 'Total', render: (item: any) => `Rp ${item.total_amount}` },
-        { label: 'Tanggal', render: (item: any) => new Date(item.created_at).toLocaleDateString() },
+        { label: "ID", render: (item: any) => item.id },
+        { label: "Retail", render: (item: any) => item.retail?.name || "N/A" },
+        {
+            label: "Status",
+            render: (item: any) => {
+                let color = "text-gray-700";
+                if (item.status === "approved")
+                    color = "text-green-600 font-semibold";
+                else if (item.status === "pending")
+                    color = "text-yellow-600 font-semibold";
+                else if (item.status === "rejected")
+                    color = "text-red-600 font-semibold";
+                return (
+                    <span className={color + " capitalize"}>{item.status}</span>
+                );
+            },
+        },
+        { label: "Total", render: (item: any) => `Rp ${item.total_amount}` },
+        {
+            label: "Tanggal",
+            render: (item: any) =>
+                new Date(item.created_at).toLocaleDateString(),
+        },
     ];
 
     const actions = (po: any) => (
         <div className="flex space-x-2">
             <Link
-                href={route('supplier.orders.show', po.id)}
+                href={route("supplier.orders.show", po.id)}
                 className="text-blue-500 hover:underline"
             >
                 Detail
@@ -34,7 +61,7 @@ export default function PurchaseOrders({ auth }: PageProps) {
         </div>
     );
 
-    const {pendingCount, statusMessage} = usePage().props as any;
+    const { pendingCount, statusMessage } = usePage().props as any;
 
     return (
         <AuthenticatedLayout>
@@ -47,23 +74,30 @@ export default function PurchaseOrders({ auth }: PageProps) {
                             {statusMessage}
                         </div>
                     )}
-                    <h2 className="font-semibold mb-2">Daftar Purchase Order</h2>
-                   <DataTable
+                    <h2 className="font-semibold mb-2">
+                        Daftar Purchase Order
+                    </h2>
+                    <DataTable
                         data={purchaseOrders.data}
                         columns={columns}
-                        actions={actions}/>
+                        actions={actions}
+                    />
                     <div className="flex justify-between items-center text-sm text-gray-600 mt-2">
-                    <div>
-                        Showing{" "}
-                        {(purchaseOrders.current_page - 1) * purchaseOrders.per_page + 1} to{" "}
-                        {Math.min(
-                            purchaseOrders.current_page * purchaseOrders.per_page,
-                            purchaseOrders.total
-                        )}{" "}
-                        of {purchaseOrders.total} entries
+                        <div>
+                            Showing{" "}
+                            {(purchaseOrders.current_page - 1) *
+                                purchaseOrders.per_page +
+                                1}{" "}
+                            to{" "}
+                            {Math.min(
+                                purchaseOrders.current_page *
+                                    purchaseOrders.per_page,
+                                purchaseOrders.total
+                            )}{" "}
+                            of {purchaseOrders.total} entries
+                        </div>
+                        <Pagination links={purchaseOrders.links} />
                     </div>
-                    <Pagination links={purchaseOrders.links} />
-                </div>
                 </div>
             </div>
         </AuthenticatedLayout>
