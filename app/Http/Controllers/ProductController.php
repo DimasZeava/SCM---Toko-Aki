@@ -13,14 +13,14 @@ class ProductController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $products = Product::with('supplier')->orderBy('created_at', 'desc')->paginate($perPage);
-        return Inertia::render('Product/Index', [
+        return Inertia::render('Supplier/Product/Index', [
             'products' => $products,
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Product/Create');
+        return Inertia::render('Supplier/Product/Create');
     }
 
     public function store(Request $request)
@@ -40,11 +40,18 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created!');
     }
 
-    public function show($id) {}
+     public function show($id)
+    {
+        $product = Product::findOrFail($id);
+
+        return Inertia::render('Supplier/Product/Show', [
+            'product' => $product,
+        ]);
+    }
 
     public function edit(Product $product)
     {
-        return Inertia::render('Product/Edit', [
+        return Inertia::render('Supplier/Product/Edit', [
             'product' => $product,
         ]);
     }
